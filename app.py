@@ -16,7 +16,6 @@ client = genai.Client(api_key=GEMINI_API_KEY)
 app = Flask(__name__)
 CORS(app)
 
-
 def generate_essay(tema):
     """
     Gera uma redação completa baseada no tema fornecido
