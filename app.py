@@ -53,51 +53,49 @@ def generate_essay_endpoint():
     """
     Endpoint para gerar uma redação baseada no tema fornecido
     """
-    data = request.get_json()
+    print("=== NOVA REQUISIÇÃO RECEBIDA ===")
     
-    # Validação: Verifica se o tema foi enviado
+    data = request.get_json(force=True, silent=True)
+    print(f"Dados recebidos no Back-end: {data}")
+    
     if not data or "tema" not in data:
         return jsonify({
             "status": "error",
-            "message": "Por favor, forneça um tema para a redação no formato: {'tema': 'seu tema aqui'}",
-            "exemplo": {
-                "tema": "Desafios da inclusão digital no Brasil"
-            }
+            "message": "Por favor, forneça um tema no formato: {'tema': 'seu tema aqui'}"
         }), 400
         
     tema = data.get("tema", "").strip()
+    print(f"Tema extraído: '{tema}' (Tamanho: {len(tema)})")
     
-    # Validação: Tema não pode estar vazio
     if not tema:
         return jsonify({
             "status": "error",
             "message": "O tema da redação não pode estar vazio."
         }), 400
     
-    # Validação: Tema deve ter no mínimo 10 caracteres
     if len(tema) < 10:
         return jsonify({
             "status": "error",
-            "message": "O tema deve ter pelo menos 10 caracteres. Seja mais específico."
+            "message": "O tema deve ter pelo menos 10 caracteres."
         }), 400
     
     try:
+        print("Chamando a API do Gemini...")
         redacao_json_string = generate_essay(tema)
-        
         redacao_estruturada = json.loads(redacao_json_string)
+        print("Redação gerada com sucesso pelo Gemini!")
         
         return jsonify({
             "status": "success",
             "tema_solicitado": tema,
-            "redacao": redacao_estruturada,
-            "mensagem_extra": "Redação gerada com sucesso! Continue praticando para alcançar a nota 1000! 📝✨"
+            "redacao": redacao_estruturada
         }), 200
         
     except Exception as e:
+        print(f"ERRO CRÍTICO NO BACK-END: {str(e)}")
         return jsonify({
             "status": "error",
-            "message": f"Erro ao gerar a redação: {str(e)}",
-            "dica": "Tente reformular o tema ou usar um tema mais específico."
+            "message": f"Erro interno ao gerar a redação: {str(e)}"
         }), 500
 
 @app.route("/temas-sugeridos", methods=["GET"])

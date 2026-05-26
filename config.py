@@ -121,4 +121,5 @@ A redação deve alcançar NOTA 1000 em todas as competências:
 ✓ C5: Elaborar proposta de intervenção detalhada
 
 Lembre-se: Cada redação é uma nova criação! Seja criativo, use repertórios variados e mantenha sempre a excelência acadêmica.
+
 """
