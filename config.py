@@ -1,4 +1,4 @@
-# config.py - Configurações para o Gerador de Redações
+# config.py - Configurações para o Gerador de Redações (Atualizado com Rigor ENEM)
 
 # ==============================================================================
 # SCHEMA DA GERAÇÃO DE REDAÇÃO (Usado na rota /gerar-redacao)
@@ -46,26 +46,11 @@ REDACAO_SCHEMA = {
         "analise_criterios_enem": {
             "type": "object",
             "properties": {
-                "competencia_1": {
-                    "type": "string",
-                    "description": "Análise da competência 1 (Domínio da escrita formal)"
-                },
-                "competencia_2": {
-                    "type": "string", 
-                    "description": "Análise da competência 2 (Compreensão do tema)"
-                },
-                "competencia_3": {
-                    "type": "string",
-                    "description": "Análise da competência 3 (Argumentação)"
-                },
-                "competencia_4": {
-                    "type": "string",
-                    "description": "Análise da competência 4 (Coesão e coerência)"
-                },
-                "competencia_5": {
-                    "type": "string",
-                    "description": "Análise da competência 5 (Proposta de intervenção)"
-                }
+                "competencia_1": { "type": "string", "description": "Análise da competência 1 (Domínio da escrita formal)" },
+                "competencia_2": { "type": "string", "description": "Análise da competência 2 (Compreensão do tema)" },
+                "competencia_3": { "type": "string", "description": "Análise da competência 3 (Argumentação)" },
+                "competencia_4": { "type": "string", "description": "Análise da competência 4 (Coesão e coerência)" },
+                "competencia_5": { "type": "string", "description": "Análise da competência 5 (Proposta de intervenção)" }
             }
         }
     },
@@ -78,48 +63,48 @@ REDACAO_SCHEMA = {
 CORRECAO_SCHEMA = {
     "type": "object",
     "properties": {
-        "nota_total": {"type": "integer", "description": "Soma das notas das 5 competências (0 a 1000)"},
+        "nota_total": {"type": "integer", "description": "Soma exata das notas das 5 competências (0 a 1000)"},
         "competencia_1": {
             "type": "object",
             "properties": {
-                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
-                "justificativa": {"type": "string", "description": "Erros gramaticais encontrados e avaliação da norma culta"}
+                "nota": {"type": "integer", "description": "Nota estrita: 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Análise cirúrgica da estrutura sintática e contagem de desvios gramaticais/ortográficos."}
             },
             "required": ["nota", "justificativa"]
         },
         "competencia_2": {
             "type": "object",
             "properties": {
-                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
-                "justificativa": {"type": "string", "description": "Avaliação da compreensão do tema e repertório legítimo e produtivo"}
+                "nota": {"type": "integer", "description": "Nota estrita: 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Avaliação da abordagem completa do tema. Identifique se o repertório sociocultural usado é legítimo, pertinente E produtivo. Puna o uso de 'repertório coringa/de bolso' superficial."}
             },
             "required": ["nota", "justificativa"]
         },
         "competencia_3": {
             "type": "object",
             "properties": {
-                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
-                "justificativa": {"type": "string", "description": "Avaliação do projeto de texto, argumentação e seleção de fatos"}
+                "nota": {"type": "integer", "description": "Nota estrita: 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Projeto de texto e consistência argumentativa. Se o repertório da C2 foi apenas decorativo, puna severamente a C3 aqui, justificando a falta de desdobramento crítico."}
             },
             "required": ["nota", "justificativa"]
         },
         "competencia_4": {
             "type": "object",
             "properties": {
-                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
-                "justificativa": {"type": "string", "description": "Avaliação dos conectivos interparágrafos e intraparágrafos e repetições"}
+                "nota": {"type": "integer", "description": "Nota estrita: 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Avaliação qualitativa da coesão. Não faça apenas contagem numérica. Avalie a pertinência, a expressividade e a naturalidade dos conectivos inter e intraparágrafos. Puna repetições excessivas ou uso artificial/forçado."}
             },
             "required": ["nota", "justificativa"]
         },
         "competencia_5": {
             "type": "object",
             "properties": {
-                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
-                "justificativa": {"type": "string", "description": "Avaliação dos 5 elements da proposta: agente, ação, meio/modo, detalhamento e efeito"}
+                "nota": {"type": "integer", "description": "Nota estrita: 0, 40, 80, 120, 160 ou 200. Sendo 40 pontos para cada elemento válido encontrado."},
+                "justificativa": {"type": "string", "description": "Verificação minuciosa dos 5 elementos obrigatórios: Agente, Ação, Meio/Modo, Efeito e Detalhamento. Seja extremamente intolerante com Ações genéricas ou Detalhamentos implícitos, aplicando a punição triplicada caso falte clareza prática."}
             },
             "required": ["nota", "justificativa"]
         },
-        "comentario_geral": {"type": "string", "description": "Análise geral do texto e principais pontos de melhoria"}
+        "comentario_geral": {"type": "string", "description": "Análise global da autoria do texto. Destaque se o texto parece um esqueleto/modelo decorado ou se demonstra reflexão crítica real, oferecendo o caminho prático para evolução."}
     },
     "required": ["nota_total", "competencia_1", "competencia_2", "competencia_3", "competencia_4", "competencia_5", "comentario_geral"]
 }
@@ -153,7 +138,7 @@ ESTRUTURA OBRIGATÓRIA DA REDAÇÃO:
    - Apresentação clara da TESE (posicionamento do autor)
    - Mínimo 6 linhas
 
-3. DESENVOLVIMENTO (2 ou 3 parágrafos):
+3. DESENVolVIMENTO (2 ou 3 parágrafos):
    - Cada parágrafo com um ARGUMENTO central
    - Uso de CONECTORES lógicos (além disso, portanto, contudo, etc.)
    - Exemplificação com dados, fatos ou citações relevantes
@@ -173,7 +158,7 @@ A redação deve alcançar NOTA 1000 em todas as competências:
 ✓ C1: Demonstrar domínio da modalidade escrita formal
 ✓ C2: Compreender a proposta e aplicar conceitos
 ✓ C3: Selecionar e organizar argumentos
-✓ C4: Demonstrar conhecimento dos mechanisms linguísticos
+✓ C4: Demonstrar conhecimento dos mecanismos linguísticos
 ✓ C5: Elaborar proposta de intervenção detalhada
 
 Lembre-se: Cada redação é uma nova criação! Seja criativo, use repertórios variados e mantenha sempre a excelência acadêmica.

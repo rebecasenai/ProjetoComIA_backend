@@ -121,8 +121,23 @@ def corrigir_redacao_endpoint():
 
         # 2. Monta as instruções para a IA
         prompt_corretor = f"Tema: {tema}\nTexto do Aluno:\n{texto}"
-        instruction_corretor = "Atue como corretor oficial do ENEM. Forneça notas de 0 a 200 para cada uma das 5 competências baseando-se estritamente nos critérios formais."
+        instruction_corretor = (
+            "Você é um corretor implacável e oficial da banca do ENEM. Seu objetivo é identificar e "
+            "punir com extremo rigor redações baseadas em 'esqueletos' ou 'modelos coringa' decorados. "
+            "Avalie a qualidade real da argumentação e a produtividade real dos repertórios. "
+            "Atribua notas estritamente nos níveis oficiais (0, 40, 80, 120, 160, 200) para cada competência, "
+            "justificando as perdas de pontos com base nos critérios mais recentes e exigentes da banca."
+        )
 
+        response = client.models.generate_content(
+            model="gemini-3.5-flash",
+            contents=prompt_corretor,
+            config=types.GenerateContentConfig(
+                system_instruction=instruction_corretor,
+                response_mime_type="application/json",
+                response_schema=CORRECAO_SCHEMA,      
+            )
+        )
         # 3. Faz a chamada para a API do Gemini
         # Nota: Usamos CORRECAO_SCHEMA que definimos anteriormente
         response = client.models.generate_content(
