@@ -1,6 +1,8 @@
 # config.py - Configurações para o Gerador de Redações
 
-# Schema da Redação em formato JSON
+# ==============================================================================
+# SCHEMA DA GERAÇÃO DE REDAÇÃO (Usado na rota /gerar-redacao)
+# ==============================================================================
 REDACAO_SCHEMA = {
     "type": "object",
     "properties": {
@@ -70,7 +72,61 @@ REDACAO_SCHEMA = {
     "required": ["titulo", "introducao", "desenvolvimento", "conclusao", "referencias", "analise_criterios_enem"]
 }
 
-# System Instruction para o Professor
+# ==============================================================================
+# SCHEMA DA CORREÇÃO DE REDAÇÃO (Usado na rota /corrigir-redacao)
+# ==============================================================================
+CORRECAO_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "nota_total": {"type": "integer", "description": "Soma das notas das 5 competências (0 a 1000)"},
+        "competencia_1": {
+            "type": "object",
+            "properties": {
+                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Erros gramaticais encontrados e avaliação da norma culta"}
+            },
+            "required": ["nota", "justificativa"]
+        },
+        "competencia_2": {
+            "type": "object",
+            "properties": {
+                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Avaliação da compreensão do tema e repertório legítimo e produtivo"}
+            },
+            "required": ["nota", "justificativa"]
+        },
+        "competencia_3": {
+            "type": "object",
+            "properties": {
+                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Avaliação do projeto de texto, argumentação e seleção de fatos"}
+            },
+            "required": ["nota", "justificativa"]
+        },
+        "competencia_4": {
+            "type": "object",
+            "properties": {
+                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Avaliação dos conectivos interparágrafos e intraparágrafos e repetições"}
+            },
+            "required": ["nota", "justificativa"]
+        },
+        "competencia_5": {
+            "type": "object",
+            "properties": {
+                "nota": {"type": "integer", "description": "Nota de 0, 40, 80, 120, 160 ou 200"},
+                "justificativa": {"type": "string", "description": "Avaliação dos 5 elements da proposta: agente, ação, meio/modo, detalhamento e efeito"}
+            },
+            "required": ["nota", "justificativa"]
+        },
+        "comentario_geral": {"type": "string", "description": "Análise geral do texto e principais pontos de melhoria"}
+    },
+    "required": ["nota_total", "competencia_1", "competencia_2", "competencia_3", "competencia_4", "competencia_5", "comentario_geral"]
+}
+
+# ==============================================================================
+# SYSTEM INSTRUCTION PARA O GERADOR DE REDAÇÕES
+# ==============================================================================
 SYSTEM_INSTRUCTION = """
 Você é um Professor altamente profissional e qualificado, especialista em preparação para o ENEM. 
 Você já teve vários alunos que alcançaram nota 1000 na redação e excelente rendimento escolar.
@@ -117,9 +173,8 @@ A redação deve alcançar NOTA 1000 em todas as competências:
 ✓ C1: Demonstrar domínio da modalidade escrita formal
 ✓ C2: Compreender a proposta e aplicar conceitos
 ✓ C3: Selecionar e organizar argumentos
-✓ C4: Demonstrar conhecimento dos mecanismos linguísticos
+✓ C4: Demonstrar conhecimento dos mechanisms linguísticos
 ✓ C5: Elaborar proposta de intervenção detalhada
 
 Lembre-se: Cada redação é uma nova criação! Seja criativo, use repertórios variados e mantenha sempre a excelência acadêmica.
-
 """

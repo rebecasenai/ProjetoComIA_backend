@@ -5,7 +5,7 @@ from flask_cors import CORS
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
-from config import REDACAO_SCHEMA, SYSTEM_INSTRUCTION
+from config import REDACAO_SCHEMA, CORRECAO_SCHEMA, SYSTEM_INSTRUCTION
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -97,6 +97,68 @@ def generate_essay_endpoint():
             "status": "error",
             "message": f"Erro interno ao gerar a redação: {str(e)}"
         }), 500
+
+
+# Certifique-se de ter importado o json no topo do arquivo:
+# import json
+
+@app.route("/corrigir-redacao", methods=["POST"])
+def corrigir_redacao_endpoint():
+    try:
+        # 1. Tenta capturar os dados enviados
+        data = request.get_json(force=True, silent=True)
+        if not data:
+            return jsonify({"status": "error", "message": "Nenhum dado JSON foi enviado no Body."}), 400
+            
+        tema = data.get("tema", "").strip()
+        texto = data.get("texto", "").strip()
+        
+        if not tema or not texto:
+            return jsonify({"status": "error", "message": "Faltando os campos 'tema' ou 'texto' no JSON."}), 400
+
+        if len(texto) < 100:
+            return jsonify({"status": "error", "message": "Texto muito curto (mínimo 100 caracteres)."}), 400
+
+        # 2. Monta as instruções para a IA
+        prompt_corretor = f"Tema: {tema}\nTexto do Aluno:\n{texto}"
+        instruction_corretor = "Atue como corretor oficial do ENEM. Forneça notas de 0 a 200 para cada uma das 5 competências baseando-se estritamente nos critérios formais."
+
+        # 3. Faz a chamada para a API do Gemini
+        # Nota: Usamos CORRECAO_SCHEMA que definimos anteriormente
+        response = client.models.generate_content(
+            model="gemini-3.5-flash",
+            contents=prompt_corretor,
+            config=types.GenerateContentConfig(
+                system_instruction=instruction_corretor,
+                response_mime_type="application/json",
+                response_schema=CORRECAO_SCHEMA,      
+            )
+        )
+        
+        # 4. Tenta decodificar a resposta do Gemini
+        try:
+            correcao_estruturada = json.loads(response.text)
+        except Exception as json_err:
+            return jsonify({
+                "status": "error", 
+                "message": "A IA gerou a correção, mas ela veio em um formato inválido.",
+                "detalhes": str(json_err),
+                "resposta_crua": response.text
+            }), 500
+        
+        return jsonify({
+            "status": "success",
+            "correcao": correcao_estruturada
+        }), 200
+        
+    except Exception as e:
+        # Se qualquer outra coisa falhar (como a API KEY ou o Schema), retorna o erro exato na tela
+        return jsonify({
+            "status": "error",
+            "message": "Erro interno no servidor (Código 500)",
+            "causa_exata": str(e)
+        }), 500
+
 
 @app.route("/temas-sugeridos", methods=["GET"])
 def get_sugested_themes():
